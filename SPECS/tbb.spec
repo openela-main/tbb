@@ -4,7 +4,7 @@
 Name:    tbb
 Summary: The Threading Building Blocks library abstracts low-level threading details
 Version: %{upver}%{?uprel:.%{uprel}}
-Release: 9%{?dist}
+Release: 10%{?dist}.1
 License: ASL 2.0
 Group:   Development/Tools
 URL:     http://threadingbuildingblocks.org/
@@ -82,10 +82,9 @@ Blocks (TBB) C++ libraries.
 %package doc
 Summary: The Threading Building Blocks documentation
 Group: Documentation
-Provides: bundled(jquery)
 
 %description doc
-PDF documentation for the user of the Threading Building Block (TBB)
+HTML documentation for the user of the Threading Building Block (TBB)
 C++ library.
 
 %if %{with python2}
@@ -150,11 +149,15 @@ cp -a python python2
 cp -a python python3
 sed -i 's,python,python3,g' python3/Makefile python3/rml/Makefile
 sed -i 's,python2,python3,' python3/TBB.py python3/tbb/__*.py
-%endif
 
 # Invoke Python with the %%{__python3} executable instead of hardcoded python3
 sed -i 's,PY_SETUP=python3,PY_SETUP=%{__python3},g' python3/Makefile
 sed -i 's,python3 -m tbb test,%{__python3} -m tbb test,g' python3/Makefile
+%endif
+
+# Remove jQuery
+rm doc/html/jquery.js
+find doc/html -name '*.html' | xargs sed -i '/<script type="text.javascript" src="jquery.js"><.script>/d'
 
 %build
 %ifarch %{ix86}
@@ -246,7 +249,7 @@ cp -p src/rml/include/*.h $RPM_BUILD_ROOT%{_includedir}/rml
 # Python 2 install
 %if %{with python2}
 . build/obj_release/tbbvars.sh
-pushd python
+pushd python2
 %py2_install
 chmod a+x $RPM_BUILD_ROOT%{python2_sitearch}/TBB.py
 chmod a+x $RPM_BUILD_ROOT%{python2_sitearch}/tbb/__*.py
@@ -312,6 +315,18 @@ rm $RPM_BUILD_ROOT%{_libdir}/cmake/%{name}/README.rst
 %endif
 
 %changelog
+* Tue Feb 04 2025 Jonathan Wakely <jwakely@redhat.com> - 2018.2-10.1
+- Remove jQuery from Doxygen files (RHEL-77669)
+
+* Wed Feb 03 2021 Thomas Rodgers <trodgers@redhat.com> - 2018.2-10
+- Apply patches from (BZ #1907561)
+- Bump release
+
+* Sun Dec 20 2020 Owen Taylor <otaylor@redhat.com> - 2018.2-9
+- Fix build directory referenced in python2 build
+- Move some python3 code that escaped back into a conditional
+  (BZ #1907561)
+
 * Tue Nov 13 2018 Patsy Griffin Franklin <pfrankli@redhat.com> - 2018.2-9
 - Require the correct version of tbb for python2-tbb and python3-tbb.
   (BZ #1638041)
