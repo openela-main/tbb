@@ -1,7 +1,7 @@
 Name:    tbb
 Summary: The Threading Building Blocks library abstracts low-level threading details
 Version: 2020.3
-Release: 8%{?dist}
+Release: 8%{?dist}.1
 License: ASL 2.0
 URL:     http://threadingbuildingblocks.org/
 
@@ -61,10 +61,9 @@ Blocks (TBB) C++ libraries.
 
 %package doc
 Summary: The Threading Building Blocks documentation
-Provides: bundled(jquery)
 
 %description doc
-PDF documentation for the user of the Threading Building Block (TBB)
+HTML documentation for the user of the Threading Building Block (TBB)
 C++ library.
 
 
@@ -90,6 +89,9 @@ sed -i 's,env python,python3,' python/TBB.py python/tbb/__*.py
 
 # Remove shebang from files that don't need it
 sed -i '/^#!/d' python/tbb/{pool,test}.py
+
+# Disable jQuery use
+sed -i '/^SEARCHENGINE/s/YES/NO/' Doxyfile
 
 %build
 compiler=""
@@ -124,6 +126,9 @@ popd
 
 # Build the documentation
 make doxygen
+# We don't want to ship jQuery in the tbb-doc package
+rm html/jquery.js
+find html -name '*.html' | xargs sed -i '/<script type="text.javascript" src="jquery.js"><.script>/d'
 
 %check
 # This test assumes it can create thread barriers for arbitrary numbers of
@@ -205,6 +210,9 @@ cmake \
 %{python3_sitearch}/__pycache__/TBB*
 
 %changelog
+* Tue Feb 04 2025 Jonathan Wakely <jwakely@redhat.com> - 2020.3-8.1
+- Remove jQuery from Doxygen output (RHEL-77693)
+
 * Tue Aug 10 2021 Mohan Boddu <mboddu@redhat.com> - 2020.3-8
 - Rebuilt for IMA sigs, glibc 2.34, aarch64 flags
   Related: rhbz#1991688
