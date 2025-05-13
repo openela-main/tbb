@@ -1,7 +1,7 @@
 Name:    tbb
 Summary: The Threading Building Blocks library abstracts low-level threading details
 Version: 2020.3
-Release: 8%{?dist}.1
+Release: 9%{?dist}
 License: ASL 2.0
 URL:     http://threadingbuildingblocks.org/
 
@@ -210,8 +210,8 @@ cmake \
 %{python3_sitearch}/__pycache__/TBB*
 
 %changelog
-* Tue Feb 04 2025 Jonathan Wakely <jwakely@redhat.com> - 2020.3-8.1
-- Remove jQuery from Doxygen output (RHEL-77693)
+* Tue Feb 04 2025 Jonathan Wakely <jwakely@redhat.com> - 2020.3-9
+- Remove jQuery from Doxygen output (RHEL-77697)
 
 * Tue Aug 10 2021 Mohan Boddu <mboddu@redhat.com> - 2020.3-8
 - Rebuilt for IMA sigs, glibc 2.34, aarch64 flags
