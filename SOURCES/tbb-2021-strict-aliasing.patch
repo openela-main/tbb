@@ -1,0 +1,12 @@
+diff -up oneTBB-2021.7.0/src/tbbmalloc/frontend.cpp.orig oneTBB-2021.7.0/src/tbbmalloc/frontend.cpp
+--- oneTBB-2021.6.0/src/tbbmalloc/frontend.cpp.orig	2022-10-07 08:34:12.000000000 -0600
++++ oneTBB-2021.6.0/src/tbbmalloc/frontend.cpp	2022-11-03 13:28:39.050045201 -0600
+@@ -1516,7 +1516,7 @@ bool Block::readyToShare()
+     {
+         MallocMutex::scoped_lock scoped_cs(publicFreeListLock);
+         if ( (oldVal=publicFreeList)==nullptr )
+-            (intptr_t&)(publicFreeList) = UNUSABLE;
++            publicFreeList = reinterpret_cast<FreeObject *>(UNUSABLE);
+     }
+ #endif
+     return oldVal==nullptr;
